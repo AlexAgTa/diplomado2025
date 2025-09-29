@@ -21,5 +21,16 @@ class TestFibonacci(unittest.TestCase):
         # Verifica los primeros 6 elementos
         self.assertEqual(elementos[:6], ["0", "1", "1", "2", "3", "5"])
 
+    def test_numero_negativo(self):
+        self.assertEqual(generar_secuencia_fibonacci(-5), "")
+
+    def test_entrada_no_entero(self):
+        with self.assertRaises(TypeError):
+            generar_secuencia_fibonacci("diez")
+
+    def test_entrada_none(self):
+        with self.assertRaises(TypeError):
+            generar_secuencia_fibonacci(None)
+
 if __name__ == "__main__":
     unittest.main()
