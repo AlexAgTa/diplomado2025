@@ -1,0 +1,12 @@
+{
+  "name": "selenium-complex-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/**/*.spec.js --reporter markdown > report.md"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

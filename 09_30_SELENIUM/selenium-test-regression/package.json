@@ -1,0 +1,20 @@
+{
+  "name": "selenium-test-regression",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha tests/**/*.spec.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "chai": "^6.2.0",
+    "mocha": "^11.7.3",
+    "selenium-webdriver": "^4.35.0"
+  }
+}
