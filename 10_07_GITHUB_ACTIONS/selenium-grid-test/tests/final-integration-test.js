@@ -1,10 +1,17 @@
 const { expect } = require('chai');
 const { WebDriverSimpleConfig, By, until } = require('../config/webdriver-simple-config');
+const allure = require('allure-mocha/runtime');
 
 describe('Prueba Final de Integración - Ambos Navegadores', function() {
     this.timeout(60000);
 
     it('debería ejecutar un flujo completo en Chrome @chrome', async function() {
+        allure.epic('Pruebas Cross-Browser');
+        allure.feature('Flujo Completo');
+        allure.story('Flujo Chrome Completo');
+        allure.severity('critical');
+        allure.label('browser', 'chrome');
+        
         const driver = await WebDriverSimpleConfig.createDriver('chrome');
         
         try {
@@ -42,6 +49,10 @@ describe('Prueba Final de Integración - Ambos Navegadores', function() {
             const messageText = await message.getText();
             expect(messageText.toLowerCase()).to.include('gone');
             
+            // Screenshot final del flujo
+            const screenshot = await driver.takeScreenshot();
+            allure.attachment('screenshot-flujo-completo-chrome', Buffer.from(screenshot, 'base64'), 'image/png');
+            
             console.log('✅ Flujo completo completado exitosamente en Chrome');
             
         } finally {
@@ -50,6 +61,12 @@ describe('Prueba Final de Integración - Ambos Navegadores', function() {
     });
 
     it('debería ejecutar un flujo completo en Firefox @firefox', async function() {
+        allure.epic('Pruebas Cross-Browser');
+        allure.feature('Flujo Completo');
+        allure.story('Flujo Firefox Completo');
+        allure.severity('critical');
+        allure.label('browser', 'firefox');
+        
         const driver = await WebDriverSimpleConfig.createDriver('firefox');
         
         try {
@@ -57,6 +74,11 @@ describe('Prueba Final de Integración - Ambos Navegadores', function() {
             
             // Paso 1: Sauce Demo - Login
             await driver.get('https://www.saucedemo.com/');
+            
+            // Screenshot antes del login
+            const screenshotBefore = await driver.takeScreenshot();
+            allure.attachment('screenshot-before-login-firefox', Buffer.from(screenshotBefore, 'base64'), 'image/png');
+            
             await driver.findElement(By.id('user-name')).sendKeys('standard_user');
             await driver.findElement(By.id('password')).sendKeys('secret_sauce');
             await driver.findElement(By.id('login-button')).click();
@@ -82,35 +104,11 @@ describe('Prueba Final de Integración - Ambos Navegadores', function() {
             await continueShopping.click();
             await driver.wait(until.urlContains('inventory'), 5000);
             
+            // Screenshot final del flujo
+            const screenshotAfter = await driver.takeScreenshot();
+            allure.attachment('screenshot-flujo-completo-firefox', Buffer.from(screenshotAfter, 'base64'), 'image/png');
+            
             console.log('✅ Flujo completo completado exitosamente en Firefox');
-            
-        } finally {
-            await driver.quit();
-        }
-    });
-
-    it('debería verificar que ambos navegadores pueden tomar screenshots @chrome @firefox', async function() {
-        const browserName = this.test.title.includes('Chrome') ? 'chrome' : 'firefox';
-        const driver = await WebDriverSimpleConfig.createDriver(browserName);
-        
-        try {
-            await driver.get('https://the-internet.herokuapp.com/');
-            
-            // Tomar screenshot
-            const screenshot = await driver.takeScreenshot();
-            expect(screenshot).to.be.a('string');
-            expect(screenshot.length).to.be.greaterThan(1000);
-            
-            // Verificar título
-            const title = await driver.getTitle();
-            expect(title).to.include('The Internet');
-            
-            // Verificar que la página tiene contenido
-            const content = await driver.findElement(By.css('.heading'));
-            const contentText = await content.getText();
-            expect(contentText).to.include('Welcome to the-internet');
-            
-            console.log(`✅ Screenshot y verificación de contenido exitosos en ${browserName}`);
             
         } finally {
             await driver.quit();

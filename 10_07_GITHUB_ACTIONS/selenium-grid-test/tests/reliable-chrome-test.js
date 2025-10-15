@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const { WebDriverSimpleConfig, By, until } = require('../config/webdriver-simple-config');
+const allure = require('allure-mocha/runtime');
 
 describe('Chrome Tests - Sitios Confiables @chrome', function() {
     this.timeout(40000);
@@ -7,6 +8,10 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
     let driver;
 
     before(async function() {
+        allure.epic('Pruebas Cross-Browser');
+        allure.feature('Pruebas Chrome');
+        allure.label('browser', 'chrome');
+        
         console.log('Iniciando Chrome driver para pruebas confiables...');
         driver = await WebDriverSimpleConfig.createDriver('chrome');
     });
@@ -18,7 +23,15 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
     });
 
     it('debería realizar login exitoso en Sauce Demo', async function() {
+        allure.story('Login Sauce Demo');
+        allure.severity('critical');
+        allure.tag('login', 'sauce-demo');
+        
         await driver.get('https://www.saucedemo.com/');
+        
+        // Tomar screenshot antes del login
+        const screenshotBefore = await driver.takeScreenshot();
+        allure.attachment('screenshot-before-login', Buffer.from(screenshotBefore, 'base64'), 'image/png');
         
         // Llenar formulario de login
         const usernameInput = await driver.wait(
@@ -44,6 +57,10 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
         const titleText = await productsTitle.getText();
         expect(titleText).to.equal('Products');
         
+        // Tomar screenshot después del login
+        const screenshotAfter = await driver.takeScreenshot();
+        allure.attachment('screenshot-after-login', Buffer.from(screenshotAfter, 'base64'), 'image/png');
+        
         // Verificar que hay productos listados
         const inventoryItems = await driver.findElements(By.css('.inventory_item'));
         expect(inventoryItems.length).to.be.greaterThan(0);
@@ -52,6 +69,10 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
     });
 
     it('debería agregar productos al carrito', async function() {
+        allure.story('Carrito de Compras');
+        allure.severity('normal');
+        allure.tag('cart', 'ecommerce');
+        
         await driver.get('https://www.saucedemo.com/inventory.html');
         
         // Agregar primer producto al carrito
@@ -62,7 +83,7 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
         
         await addToCartButtons[0].click();
         
-        // Verificar que el botón cambió (puede ser "Remove" o "REMOVE")
+        // Verificar que el botón cambió
         const updatedButton = await driver.findElement(By.css('.btn_inventory'));
         const buttonText = await updatedButton.getText();
         
@@ -74,10 +95,18 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
         const badgeText = await cartBadge.getText();
         expect(badgeText).to.equal('1');
         
+        // Tomar screenshot del carrito
+        const screenshot = await driver.takeScreenshot();
+        allure.attachment('screenshot-cart', Buffer.from(screenshot, 'base64'), 'image/png');
+        
         console.log('✅ Producto agregado al carrito exitosamente. Texto del botón:', buttonText);
     });
 
     it('debería completar el proceso de checkout', async function() {
+        allure.story('Checkout Completo');
+        allure.severity('critical');
+        allure.tag('checkout', 'ecommerce');
+        
         await driver.get('https://www.saucedemo.com/inventory.html');
         
         // Agregar producto al carrito
@@ -135,10 +164,18 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
         const messageText = await completeMessage.getText();
         expect(messageText).to.include('Thank you for your order!');
         
+        // Screenshot final
+        const screenshot = await driver.takeScreenshot();
+        allure.attachment('screenshot-checkout-complete', Buffer.from(screenshot, 'base64'), 'image/png');
+        
         console.log('✅ Proceso de checkout completado exitosamente');
     });
 
     it('debería interactuar con elementos dinámicos en The Internet', async function() {
+        allure.story('Elementos Dinámicos');
+        allure.severity('normal');
+        allure.tag('dynamic-elements', 'the-internet');
+        
         await driver.get('https://the-internet.herokuapp.com/add_remove_elements/');
         
         // Agregar elementos dinámicamente
@@ -165,6 +202,10 @@ describe('Chrome Tests - Sitios Confiables @chrome', function() {
             const remainingButtons = await driver.findElements(By.css('.added-manually'));
             expect(remainingButtons.length).to.equal(2);
         }
+        
+        // Screenshot de elementos dinámicos
+        const screenshot = await driver.takeScreenshot();
+        allure.attachment('screenshot-dynamic-elements', Buffer.from(screenshot, 'base64'), 'image/png');
         
         console.log('✅ Elementos dinámicos manipulados exitosamente');
     });
