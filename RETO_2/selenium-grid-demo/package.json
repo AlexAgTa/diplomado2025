@@ -6,10 +6,32 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx mocha tests/**/*.js --timeout 40000",
+    "test:chrome": "npx mocha tests/**/*.js --grep \"chrome\" --timeout 40000",
+    "test:firefox": "npx mocha tests/**/*.js --grep \"firefox\" --timeout 40000",
+    "test:parallel": "npx mocha tests/**/*.js --parallel --timeout 40000",
+    "test:allure": "npx mocha tests/**/*.js --reporter mocha-allure-reporter --timeout 40000",
+    "test:allure:chrome": "npx mocha tests/**/*.js --grep \"chrome\" --reporter mocha-allure-reporter --timeout 40000",
+    "allure:generate": "npx allure generate allure-results --clean",
+    "allure:open": "npx allure open allure-report",
+    "allure:serve": "npx allure serve allure-results",
+    "test:with-allure": "npm run test:allure && npm run allure:generate && npm run allure:open",
+    "test:allure:full": "node run-tests-with-allure.js",
+    "test:allure:manual": "npx mocha tests/**/*.js --reporter mocha-allure-reporter --timeout=40000 && npx allure generate allure-results --clean && npx allure open allure-report",
+    "start:grid": "docker-compose up -d",
+    "stop:grid": "docker-compose down",
+    "test:with-grid": "node run-tests.js"
+  },
+  "devDependencies": {
+    "allure-commandline": "^2.34.1",
+    "allure-mocha": "^3.4.1",
+    "chai": "^5.1.1",
+    "mocha": "^10.2.0",
+    "mocha-allure-reporter": "^1.4.0",
+    "selenium-webdriver": "^4.22.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "Selenium Grid demo with Mocha and Chai"
 }
