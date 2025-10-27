@@ -29,9 +29,10 @@ checkDocker.on('close', (code) => {
             setTimeout(() => {
                 console.log('🧪 Ejecutando pruebas...');
                 
-                // Ejecutar pruebas
-                const testProcess = spawn('npx', ['mocha', 'tests/**/*.js', '--timeout=40000', '--parallel'], {
-                    stdio: 'inherit'
+                // Ejecutar pruebas con reporter spec
+                const testProcess = spawn('node', ['./node_modules/mocha/bin/mocha', 'tests/**/*.js', '--timeout=40000', '--parallel', '--reporter', 'spec'], {
+                    stdio: 'inherit',
+                    shell: true
                 });
                 
                 testProcess.on('close', (testCode) => {
